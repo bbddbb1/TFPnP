@@ -6,7 +6,6 @@ from ..utils.misc import torch2img255, apply_recursive
 from ..pnp import PnPSolver
 from ..data.batch import Batch
 
-
 class Env:
     def reset(self):
         """Resets the environment to an initial state and returns an initial

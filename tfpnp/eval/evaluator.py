@@ -2,14 +2,25 @@ import os
 import time
 import torch
 from os.path import join
-
+import numpy as np
 from ..utils.visualize import save_img, seq_plot
 from ..utils.metric import psnr_qrnn3d
 from ..utils.misc import MetricTracker
 from ..utils.log import COLOR, Logger
 from ..env.base import PnPEnv
+import matplotlib.pyplot as plt
+from PIL import Image
 
-
+def show(output, gt):
+    img = np.clip(output, 0, 255).astype(np.uint8)
+    img = Image.fromarray(img[0, :, :])
+    plt.subplot(2, 1, 1)
+    plt.imshow(img)
+    gt = np.clip(gt, 0, 255).astype(np.uint8)
+    img = Image.fromarray(gt[0, :, :])
+    plt.subplot(2, 1, 2)
+    plt.imshow(img)
+    plt.show()
 class Evaluator(object):
     def __init__(self, env: PnPEnv, val_loaders, savedir=None, metric=psnr_qrnn3d):
         self.env = env
@@ -77,8 +88,8 @@ def eval_single(env, data, policy, max_episode_step, metric):
     hidden = policy.init_state(observation.shape[0])  # TODO: add RNN support
     _, output_init, gt = env.get_images(observation)
 
-    psnr_init = metric(output_init[0], gt[0])
-
+    psnr_init = metric(output_init, gt)
+    # show(output_init, gt)
     episode_steps = 0
 
     psnr_seq = [psnr_init]
@@ -95,7 +106,9 @@ def eval_single(env, data, policy, max_episode_step, metric):
         episode_steps += 1
 
         _, output, gt = env.get_images(ob)
-        cur_psnr = metric(output[0], gt[0])
+        cur_psnr = metric(output, gt)
+
+        # show(output, gt)
         psnr_seq.append(cur_psnr.item())
 
         action.pop('idx_stop')
@@ -109,9 +122,9 @@ def eval_single(env, data, policy, max_episode_step, metric):
 
     run_time = time.time() - time_stamp
     input, output, gt = env.get_images(ob)
-    psnr_finished = metric(output[0], gt[0])
+    psnr_finished = metric(output, gt)
 
     info = (episode_steps, psnr_seq, action_seqs, run_time)
-    imgs = (input[0], output_init[0], output[0], gt[0])
+    imgs = (input, output_init, output, gt)
 
     return psnr_init, psnr_finished, info, imgs

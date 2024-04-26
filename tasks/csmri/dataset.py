@@ -26,7 +26,7 @@ class CSMRIDataset(Dataset):
 
     def __getitem__(self, index):
         mask = self.masks[np.random.randint(0, len(self.masks))]
-        mask = mask.astype(np.bool)
+        mask = mask.astype(bool)
         
         sigma_n = 0
 

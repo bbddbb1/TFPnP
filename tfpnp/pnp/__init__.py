@@ -1,5 +1,5 @@
 from .solver.base import PnPSolver
-from .denoiser import UNetDenoiser2D
+from .denoiser import UNetDenoiser2D, SCIUNetDenoiser, TvChambolleDenoiser
 
 
 def create_denoiser(opt):
@@ -7,6 +7,10 @@ def create_denoiser(opt):
     
     if opt.denoiser == 'unet':
         denoiser = UNetDenoiser2D()
+    elif opt.denoiser == 'unet-sci':
+        denoiser = SCIUNetDenoiser()
+    elif opt.denoiser == 'tv_denoiser':
+        denoiser = TvChambolleDenoiser()
     else:
         raise NotImplementedError
 

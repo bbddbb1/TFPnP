@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-
+import os
 
 def seq_plot(seq, xlabel, ylabel, color='blue', save_path=None):
     fig, ax = plt.subplots(1, 1, figsize=(6, 6))    
@@ -25,10 +25,13 @@ def save_img(img, path):
     # img: [C, W, H] or [C,W,H,2](complex)
     # c, w, h = img.shape
     if img.shape[0] > 3:
-        img = img[0:1, ...]
+        img = img[0, ...]
     if len(img.shape) == 4:
         img = img[...,0]
     img = np.clip(img, 0, 255).astype(np.uint8)
-    img = img.transpose(1,2,0)
-    import imageio
-    imageio.imwrite(path, img)
+    # img = img.transpose(1,2,0)
+    # import imageio
+    # imageio.imwrite(path, img)
+    from PIL import Image
+    img = Image.fromarray(img)
+    img.save(path)

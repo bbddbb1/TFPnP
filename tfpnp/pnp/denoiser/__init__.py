@@ -1,1 +1,1 @@
-from .base import UNetDenoiser2D
+from .base import UNetDenoiser2D, SCIUNetDenoiser, TvChambolleDenoiser

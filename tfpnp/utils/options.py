@@ -26,7 +26,7 @@ class Options:
         self.parser.add_argument('--resume_step', '-rs', default=None, type=int, help='Resuming model step')
         self.parser.add_argument('--eval', action='store_true', help='eval mode')
         self.parser.add_argument('--seed', default=1234, type=int, help='random seed')
-        self.parser.add_argument('--num_workers', default=8, type=int, help='number of workers on dataloader')        
+        self.parser.add_argument('--num_workers', default=1, type=int, help='number of workers on dataloader')
         self.parser.add_argument('--loop_penalty', '-lp', type=float, default=0.05, help='penalty of loop')        
         self.parser.add_argument('--action_pack', '-ap', type=int, default=5, help='pack of action')
         self.parser.add_argument('--lambda_e', '-le', type=float, default=0.05, help='penalty of loop')

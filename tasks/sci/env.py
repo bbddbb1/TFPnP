@@ -1,24 +1,24 @@
-
 import torch
 from tfpnp.data.batch import Batch
 from tfpnp.env import PnPEnv
+from tfpnp.utils.misc import torch2img255
 from tfpnp.utils.transforms import complex2channel, complex2real
+from until import shift_back_CHW
 
-
-class CSMRIEnv(PnPEnv):
+class SCIEnv(PnPEnv):
     # class attribute: the dimension of ob (exclude solver variable)
     ob_base_dim = 6  
     def __init__(self, data_loader, solver, max_episode_step):
         super().__init__(data_loader, solver, max_episode_step)
     
     def get_policy_ob(self, ob):
-        ob = torch.cat([
-            complex2real(ob.variables),
-            complex2channel(ob.y0),
-            complex2real(ob.ATy0),
+        ob= torch.cat([
+            ob.variables,
+            ob.y0,
+            ob.ATy0,
             ob.mask,
             ob.T,
-            complex2real(ob.sigma_n),
+            ob.sigma_n,
         ], 1)
         return ob
     
@@ -55,3 +55,15 @@ class CSMRIEnv(PnPEnv):
                      mask=self.state['mask'][idx_left, ...].float(),
                      sigma_n=self.state['sigma_n'][idx_left, ...],
                      T=self.state['T'][idx_left, ...])
+
+    def get_images(self, ob, pre_process=torch2img255):
+        input = self._get_attribute(ob, 'input')
+        output = self._get_attribute(ob, 'output')
+        gt = self._get_attribute(ob, 'gt')
+        imgs = [input, output, gt]
+        for i, img in enumerate(imgs):
+            imgs[i] = shift_back_CHW(img.squeeze(), 2)
+        input = pre_process(imgs[0])
+        output = pre_process(imgs[1])
+        gt = pre_process(imgs[2])
+        return input, output, gt

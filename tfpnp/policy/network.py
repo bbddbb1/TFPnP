@@ -277,3 +277,15 @@ class ResNetActor_SPI(ResNetActorBase):
                 'mu': {'scale': 70, 'shift': 50}
             })
         self.action_range = action_range
+
+
+class ResNetActor_SCI(ResNetActorBase):
+    def __init__(self, num_aux_inputs, action_bundle, action_range: Optional[OrderedDict] = None):
+        super().__init__(num_aux_inputs + 3, action_bundle, 3)
+        if action_range is None:
+            action_range = OrderedDict({
+                'sigma_d': {'scale': 70 / 255, 'shift': 0},
+                'gamma': {'scale': 0.01, 'shift': 0.01},
+                '_lambda': {'scale': 0.01, 'shift': 1},
+            })
+        self.action_range = action_range

@@ -4,7 +4,7 @@ from torch.optim.adam import Adam
 from tensorboardX.writer import SummaryWriter
 import time
 import os
-
+import datetime
 from ...data.batch import Batch
 from ...eval import Evaluator
 from ...env import PnPEnv
@@ -254,11 +254,12 @@ class MDDPGTrainer:
             torch.save(self.actor.state_dict(), '{}/actor.pkl'.format(path))
             torch.save(self.critic.state_dict(), '{}/critic.pkl'.format(path))
         else:
+            t = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
             postfix = step if isinstance(step, str) else '{:07d}'.format(step)
             torch.save(self.actor.state_dict(),
-                       '{}/actor_{}.pkl'.format(path, postfix))
+                       '{}/actor_{}_{}.pkl'.format(path, postfix, t))
             torch.save(self.critic.state_dict(),
-                       '{}/critic_{}.pkl'.format(path, postfix))
+                       '{}/critic_{}_{}.pkl'.format(path, postfix, t))
 
         self.choose_device()
 
